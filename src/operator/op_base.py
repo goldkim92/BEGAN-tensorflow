@@ -2,7 +2,8 @@ import glob
 import time
 import numpy as np
 import tensorflow as tf
-from src.function.functions import *
+from src.function.functions import make_project_dir
+import os
 
 class op_base:
     def __init__(self, args, sess):

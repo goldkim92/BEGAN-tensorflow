@@ -1,5 +1,6 @@
-from src.layer.layers import *
+from src.layer.layers import fc, conv2d, resize_nn, pool
 from src.operator.op_BEGAN import Operator
+import tensorflow as tf
 
 
 class BEGAN(Operator):

@@ -1,10 +1,13 @@
 import glob
 import time
 import datetime
-from src.layer.layers import *
-from src.function.functions import *
+from src.layer.layers import l1_loss
+from src.function.functions import get_image, inverse_image
 from src.operator.op_base import op_base
-
+import tensorflow as tf
+import os
+import numpy as np
+import scipy.misc as scm
 
 class Operator(op_base):
     def __init__(self, args, sess):
