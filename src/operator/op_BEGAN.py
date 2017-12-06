@@ -2,7 +2,7 @@ import glob
 import time
 import datetime
 from src.layer.layers import l1_loss
-from src.function.functions import get_image, inverse_image
+from src.function.functions import get_image, inverse_image, load_data
 from src.operator.op_base import op_base
 import tensorflow as tf
 import os
@@ -71,13 +71,15 @@ class Operator(op_base):
 
     def train(self, train_flag):
         # load data
-        data_path = '{0}/{1}/{2}_{3}'.format(self.data_dir, self.dataset, self.data_size, self.data_opt)
-
-        if os.path.exists(data_path + '.npy'):
-            data = np.load(data_path + '.npy')
-        else:
-            data = sorted(glob.glob(os.path.join(data_path, "*.*")))
-            np.save(data_path + '.npy', data)
+        data_path = os.path.join(self.data_dir, self.dataset, 'train', '*')
+        data = load_data(data_path)
+#        data_path = '{0}/{1}/{2}_{3}'.format(self.data_dir, self.dataset, self.data_size, self.data_opt)
+#
+#        if os.path.exists(data_path + '.npy'):
+#            data = np.load(data_path + '.npy')
+#        else:
+#            data = sorted(glob.glob(os.path.join(data_path, "*.*")))
+#            np.save(data_path + '.npy', data)
 
         print('Shuffle ....')
         random_order = np.random.permutation(len(data))

@@ -14,7 +14,7 @@ def main():
 
     # Train Data
     parser.add_argument("-d", "--data_dir", type=str, default="./Data")
-    parser.add_argument("-trd", "--dataset", type=str, default="celeba")
+    parser.add_argument("-trd", "--dataset", type=str, default="celebA")
     parser.add_argument("-tro", "--data_opt", type=str, default="crop")
     parser.add_argument("-trs", "--data_size", type=int, default=64)
 
