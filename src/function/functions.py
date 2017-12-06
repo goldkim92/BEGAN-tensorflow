@@ -9,10 +9,12 @@ def make_project_dir(project_dir):
         os.makedirs(os.path.join(project_dir, 'result_test'))
 
 
-def get_image(img_path):
+def get_image(img_path, data_size):
     img = scm.imread(img_path)/127.5 - 1.
+    img_crop = img[15:203,9:169,:]
+    img_resize = scm.imresize(img_crop,[data_size,data_size,3])
 #    img = img[..., ::-1]  # rgb to bgr
-    return img
+    return img_resize
 
 
 def inverse_image(img):

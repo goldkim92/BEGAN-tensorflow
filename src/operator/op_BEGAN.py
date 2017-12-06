@@ -91,7 +91,7 @@ class Operator(op_base):
 
                 batch_x = np.random.uniform(-1., 1., size=[self.batch_size, self.input_size])
                 batch_files = data_path_list[idx * self.batch_size: (idx + 1) * self.batch_size]
-                batch_data = [get_image(batch_file) for batch_file in batch_files]
+                batch_data = [get_image(batch_file,self.data_size) for batch_file in batch_files]
 
                 # opt & feed list (different with paper)
                 g_opt = [self.opt_g, self.g_loss, self.d_real_loss, self.d_fake_loss]
