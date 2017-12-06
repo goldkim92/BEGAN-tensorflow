@@ -2,7 +2,7 @@ import glob
 import time
 import datetime
 from src.layer.layers import l1_loss
-from src.function.functions import get_image, inverse_image, load_data
+from src.function.functions import get_image, inverse_image
 from src.operator.op_base import op_base
 import tensorflow as tf
 import os
@@ -72,19 +72,7 @@ class Operator(op_base):
     def train(self, train_flag):
         # load data
         data_path = os.path.join(self.data_dir, self.dataset, 'train', '*')
-        data = load_data(data_path)
-#        data_path = '{0}/{1}/{2}_{3}'.format(self.data_dir, self.dataset, self.data_size, self.data_opt)
-#
-#        if os.path.exists(data_path + '.npy'):
-#            data = np.load(data_path + '.npy')
-#        else:
-#            data = sorted(glob.glob(os.path.join(data_path, "*.*")))
-#            np.save(data_path + '.npy', data)
-
-        print('Shuffle ....')
-        random_order = np.random.permutation(len(data))
-        data = [data[i] for i in random_order[:]]
-        print('Shuffle Done')
+        data_path_list = glob.glob(data_path)
 
         # initial parameter
         start_time = time.time()
@@ -92,14 +80,17 @@ class Operator(op_base):
         lr = np.float32(self.learning_rate)
         self.count = 0
 
+        batch_idxs = len(data_path_list) // self.batch_size
         for epoch in range(self.niter):
-            batch_idxs = len(data) // self.batch_size
-
+            # shuffle
+            random_order = np.random.permutation(len(data_path_list))
+            data_path_list = [data_path_list[i] for i in random_order]
+            
             for idx in range(0, batch_idxs):
                 self.count += 1
 
                 batch_x = np.random.uniform(-1., 1., size=[self.batch_size, self.input_size])
-                batch_files = data[idx * self.batch_size: (idx + 1) * self.batch_size]
+                batch_files = data_path_list[idx * self.batch_size: (idx + 1) * self.batch_size]
                 batch_data = [get_image(batch_file) for batch_file in batch_files]
 
                 # opt & feed list (different with paper)
