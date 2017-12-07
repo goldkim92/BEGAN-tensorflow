@@ -26,15 +26,18 @@ class Operator(op_base):
         self.recon_gen = self.generator(self.x)
 
         # Discriminator (Critic)
-        d_real = self.decoder(self.encoder(self.y))
-        d_fake = self.decoder(self.encoder(self.recon_gen, reuse=True), reuse=True)
+        d_feature_real = self.encoder(self.y)
+        d_real = self.decoder(d_feature_real)
+        d_feature_fake = self.encoder(self.recon_gen, reuse=True)
+        d_fake = self.decoder(d_feature_fake, reuse=True)
         self.recon_dec = self.decoder(self.x, reuse=True)
 
         # Loss
         self.d_real_loss = l1_loss(self.y, d_real)
         self.d_fake_loss = l1_loss(self.recon_gen, d_fake)
+        self.d_feature_fake_loss = l1_loss(self.x, d_feature_fake)
         self.d_loss = self.d_real_loss - self.kt * self.d_fake_loss
-        self.g_loss = self.d_fake_loss
+        self.g_loss = self.d_fake_loss + self.d_feature_fake_loss
         self.m_global = self.d_real_loss + tf.abs(self.gamma * self.d_real_loss - self.d_fake_loss)
 
         # Variables
@@ -65,6 +68,7 @@ class Operator(op_base):
             tf.summary.scalar('loss/d_loss', self.d_loss)
             tf.summary.scalar('loss/d_real_loss', self.d_real_loss)
             tf.summary.scalar('loss/d_fake_loss', self.d_fake_loss)
+            tf.summary.scalar('loss/d_feature_fake_loss', self.d_feature_fake_loss)
             tf.summary.scalar('misc/kt', self.kt)
             tf.summary.scalar('misc/m_global', self.m_global)
             self.merged = tf.summary.merge_all()
