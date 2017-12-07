@@ -37,7 +37,7 @@ class Operator(op_base):
         self.d_fake_loss = l1_loss(self.recon_gen, d_fake)
         self.d_feature_fake_loss = l1_loss(self.x, d_feature_fake)
         self.d_loss = self.d_real_loss - self.kt * self.d_fake_loss
-        self.g_loss = self.d_fake_loss + self.d_feature_fake_loss
+        self.g_loss = self.d_fake_loss + (self.input_size / (self.data_size ** 2)) * self.d_feature_fake_loss
         self.m_global = self.d_real_loss + tf.abs(self.gamma * self.d_real_loss - self.d_fake_loss)
 
         # Variables
