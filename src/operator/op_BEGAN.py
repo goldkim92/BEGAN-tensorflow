@@ -8,6 +8,7 @@ import tensorflow as tf
 import os
 import numpy as np
 import scipy.misc as scm
+from tqdm import tqdm
 
 class Operator(op_base):
     def __init__(self, args, sess):
@@ -75,7 +76,7 @@ class Operator(op_base):
         data_path_list = glob.glob(data_path)
 
         # initial parameter
-        start_time = time.time()
+#        start_time = time.time()
         kt = np.float32(0.)
         lr = np.float32(self.learning_rate)
         self.count = 0
@@ -86,7 +87,7 @@ class Operator(op_base):
             random_order = np.random.permutation(len(data_path_list))
             data_path_list = [data_path_list[i] for i in random_order]
             
-            for idx in range(0, batch_idxs):
+            for idx in tqdm(range(0, batch_idxs)):
                 self.count += 1
 
                 batch_x = np.random.uniform(-1., 1., size=[self.batch_size, self.input_size])
@@ -104,13 +105,13 @@ class Operator(op_base):
 
                 # update kt, m_global
                 kt = np.maximum(np.minimum(1., kt + self.lamda * (self.gamma * d_real_loss - d_fake_loss)), 0.)
-                m_global = d_real_loss + np.abs(self.gamma * d_real_loss - d_fake_loss)
-                loss = loss_g + loss_d
+#                m_global = d_real_loss + np.abs(self.gamma * d_real_loss - d_fake_loss)
+#                loss = loss_g + loss_d
 
-                print("Epoch: [%2d] [%4d/%4d] time: %4.4f, "
-                      "loss: %.4f, loss_g: %.4f, loss_d: %.4f, d_real: %.4f, d_fake: %.4f, kt: %.8f, M: %.8f"
-                      % (epoch, idx, batch_idxs, time.time() - start_time,
-                         loss, loss_g, loss_d, d_real_loss, d_fake_loss, kt, m_global))
+#                print("Epoch: [%2d] [%4d/%4d] time: %4.4f, "
+#                      "loss: %.4f, loss_g: %.4f, loss_d: %.4f, d_real: %.4f, d_fake: %.4f, kt: %.8f, M: %.8f"
+#                      % (epoch, idx, batch_idxs, time.time() - start_time,
+#                         loss, loss_g, loss_d, d_real_loss, d_fake_loss, kt, m_global))
 
                 # write train summary
                 self.writer.add_summary(summary, self.count)
