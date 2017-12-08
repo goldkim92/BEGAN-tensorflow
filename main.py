@@ -3,7 +3,7 @@ import distutils.util
 import os
 import tensorflow as tf
 import src.models.BEGAN as began
-
+tf.reset_default_graph()
 
 def main():
     parser = argparse.ArgumentParser()
@@ -38,7 +38,8 @@ def main():
 
     gpu_number = args.gpu_number
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_number
-
+    os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+    
     with tf.device('/gpu:{0}'.format(gpu_number)):
         config = tf.ConfigProto(allow_soft_placement=True)
         config.gpu_options.allow_growth = True
