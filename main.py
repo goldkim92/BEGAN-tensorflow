@@ -43,8 +43,10 @@ def main():
         config = tf.ConfigProto(allow_soft_placement=True)
         config.gpu_options.allow_growth = True
         with tf.Session(config=config) as sess:
-            model = began.BEGAN(args, sess)
-
+            if args.project == 'began':
+                model = began.BEGAN(args, sess)
+            elif args.project == 'began_densenet':
+                model = began.BEGAN_DenseNet(args,sess)
             # TRAIN / TEST
             if args.flag:
                 model.train(args.flag)

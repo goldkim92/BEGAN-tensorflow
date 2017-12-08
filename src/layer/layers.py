@@ -1,4 +1,5 @@
 import tensorflow as tf
+import tensorflow.contrib.slim as slim
 import numpy as np
 
 
@@ -47,3 +48,32 @@ def l1_loss(x, y):
 
 def resize_nn(x, size):
     return tf.image.resize_nearest_neighbor(x, size=(int(size), int(size)))
+
+
+#%% JM
+def slim_conv2d(input_, output_dim, ks=3,s=1,padding='SAME',name='conv2d'):
+    with tf.variable_scope(name):
+        return slim.conv2d(input_, output_dim, ks, s, padding=padding,
+                           activation_fn=tf.nn.elu,
+                           weights_initializer=tf.contrib.layers.xavier_initializer())
+     
+        
+def slim_maxpool2d(input_, ks=2, s=2, padding='VALID',name='maxpool2d'):
+    with tf.variable_scope(name):
+        return slim.max_pool2d(input_, ks, s, padding=padding)
+
+    
+def slim_fully_connected(input_, num_outputs, name='fc'):
+    with tf.variable_scope(name):
+        return slim.fully_connected(input_, num_outputs,
+                                    weights_initializer=tf.contrib.layers.xavier_initializer())
+        
+def slim_denseblock(input_, nk, reuse=False, name='denseblock'):   
+    with tf.variable_scope(name):
+        h_conv1 = slim_conv2d(input_, nk, name='h_conv1')
+        h_conv2 = slim_conv2d(tf.concat((input_,h_conv1),axis=3), nk, name='h_conv2')
+        h_conv3 = slim_conv2d(tf.concat((input_,h_conv1,h_conv2),axis=3), nk, name='h_conv3')
+        h_conv4 = slim_conv2d(tf.concat((input_,h_conv1,h_conv2,h_conv3),axis=3), nk, name='h_conv4')
+        h_conv5 = slim_conv2d(tf.concat((input_,h_conv1,h_conv2,h_conv3,h_conv4),axis=3), nk, name='h_conv5')
+        
+        return h_conv5
