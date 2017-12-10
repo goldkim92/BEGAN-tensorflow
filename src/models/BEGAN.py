@@ -1,4 +1,4 @@
-from src.layer.layers import fc, conv2d, resize_nn, pool
+from src.layer.layers import fc, conv2d, resize_nn, pool, instance_norm
 from src.operator.op_BEGAN import Operator
 import tensorflow as tf
 
@@ -20,37 +20,37 @@ class BEGAN(Operator):
             x = tf.reshape(x, [-1, 8, 8, f])
 
             x = conv2d(x, [3, 3, f, f], stride=1, padding=p, name='conv1_a')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv1_b')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
 
             if self.data_size == 128:
                 x = resize_nn(x, w / 8)
                 x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv2_a')
-                x = tf.nn.elu(x)
+                x = tf.nn.elu(instance_norm(x))
                 x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv2_b')
-                x = tf.nn.elu(x)
+                x = tf.nn.elu(instance_norm(x))
 
             x = resize_nn(x, w / 4)
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv3_a')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv3_b')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
 
             x = resize_nn(x, w / 2)
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv4_a')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p, name='conv4_b')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
 
             x = resize_nn(x, w)
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p,name='conv5_a')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
             x = conv2d(x, [3, 3, f, f], stride=1,  padding=p,name='conv5_b')
-            x = tf.nn.elu(x)
+            x = tf.nn.elu(instance_norm(x))
 
             x = conv2d(x, [3, 3, f, 3], stride=1,  padding=p,name='conv6_a')
-        return x
+        return tf.nn.tanh(x)
 
     def encoder(self, x, reuse=None):
         with tf.variable_scope('disc_') as scope:
